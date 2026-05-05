@@ -199,12 +199,14 @@ class EchoBeatsLoop:
             if isinstance(out, np.ndarray):
                 stream_outputs.append(out)
 
-        # Integration: combine all stream state outputs
+        # Integration: combine all stream state outputs that share the same shape
         if stream_outputs:
-            combined = np.mean(
-                [o for o in stream_outputs if o.shape == stream_outputs[0].shape],
-                axis=0,
-            ) if any(o.shape == stream_outputs[0].shape for o in stream_outputs) else stream_outputs[0]
+            reference_shape = stream_outputs[0].shape
+            same_shape_outputs = [o for o in stream_outputs if o.shape == reference_shape]
+            if same_shape_outputs:
+                combined = np.mean(same_shape_outputs, axis=0)
+            else:
+                combined = stream_outputs[0]
             results["integrated_state"] = combined
         else:
             results["integrated_state"] = np.zeros(1)

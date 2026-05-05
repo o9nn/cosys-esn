@@ -188,8 +188,18 @@ def b_series_reservoir_expansion(order: int, domain_spec: Optional[Dict] = None,
             mask = rng.random((N, N)) < density
             W += w * mask * rng.uniform(-1, 1, (N, N))
 
-    # Normalise
-    norm = np.max(np.abs(np.linalg.eigvals(W))) + 1e-8
+    # Normalise spectral radius to 0.9
+    import scipy.sparse as _sp
+    import scipy.sparse.linalg as _spla
+    W_sparse = _sp.csr_matrix(W)
+    try:
+        k = min(6, W.shape[0] - 2)
+        if k < 1:
+            raise ValueError
+        eigs = _spla.eigs(W_sparse, k=k, which="LM", return_eigenvectors=False)
+        norm = float(np.max(np.abs(eigs))) + 1e-8
+    except Exception:
+        norm = float(np.max(np.abs(np.linalg.eigvals(W)))) + 1e-8
     W = W * (0.9 / norm)
     return W
 
