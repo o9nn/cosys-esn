@@ -17,10 +17,8 @@ License: AGPL-3.0
 import numpy as np
 from typing import Optional, Tuple, Dict, Any
 from dataclasses import dataclass
-import sys
-sys.path.append('/home/ubuntu/cosys-enhancement/shared-cosmos-lib')
 from cosmos_core import (
-    BaseCosmosService, ServiceConfig, ServiceMessage, 
+    BaseCosmosService, ServiceConfig, ServiceMessage,
     Triad, Polarity, ServicePosition, Dimension,
     TriadicCoordinator, create_message, setup_logging
 )

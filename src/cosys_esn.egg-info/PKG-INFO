@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: cosys-esn
+Version: 1.0.0
+Summary: Cosmos System 5 model applied to Echo State Networks and Reservoir Computing
+License: AGPL-3.0
+Requires-Python: >=3.11
+Requires-Dist: numpy>=1.24
+Requires-Dist: scipy>=1.10
+Requires-Dist: matplotlib>=3.7
