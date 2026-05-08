@@ -1,0 +1,7 @@
+autonomic_triad
+cerebral_triad
+cosmos_core
+integration_hub
+models
+reservoir_core
+somatic_triad

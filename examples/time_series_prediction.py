@@ -14,8 +14,11 @@ import matplotlib
 matplotlib.use('Agg')  # Non-interactive backend
 import matplotlib.pyplot as plt
 import sys
-sys.path.append('/home/ubuntu/cosys-esn/src')
-from reservoir import CosmosReservoirSystem, ReservoirConfig, setup_logging
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+from integration_hub.cosmos_reservoir_system import CosmosReservoirSystem
+from models.echo_state_network import ESNConfig
+from cosmos_core import setup_logging
 import asyncio
 
 
@@ -152,10 +155,10 @@ def main():
     
     # Create and initialize reservoir
     print("\n[3/5] Initializing Cosmos Reservoir System...")
-    config = ReservoirConfig(
-        input_dim=input_length,
-        reservoir_dim=200,      # Larger reservoir for complex dynamics
-        output_dim=1,
+    config = ESNConfig(
+        n_inputs=input_length,
+        n_reservoir=200,      # Larger reservoir for complex dynamics
+        n_outputs=1,
         spectral_radius=0.95,   # Near edge-of-chaos
         leak_rate=0.3,
         sparsity=0.1,
@@ -167,7 +170,7 @@ def main():
     
     # Train
     print("\n[4/5] Training reservoir on Mackey-Glass data...")
-    system.train(train_inputs, train_targets)
+    asyncio.run(system.train(train_inputs, train_targets))
     
     # Evaluate
     print("\n[5/5] Evaluating on test set...")
@@ -196,10 +199,10 @@ def main():
     # Plot results
     print("\n📈 Generating visualization...")
     plot_results(
-        test_targets.flatten(), 
-        predictions, 
+        test_targets.flatten(),
+        predictions,
         metrics,
-        '/home/ubuntu/cosys-esn/examples/mackey_glass_prediction.png'
+        os.path.join(os.path.dirname(__file__), 'mackey_glass_prediction.png')
     )
     
     print("\n" + "=" * 70)

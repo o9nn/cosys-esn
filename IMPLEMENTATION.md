@@ -1,242 +1,176 @@
 # COSYS-ESN Implementation
 
-## Overview
+## Status: ✅ All 10 Phases Complete
 
-This repository contains the complete implementation of the **Cosmos System 5** model applied to **Echo State Networks** and **Reservoir Computing**. The implementation follows the triadic architecture with Autonomic (input), Somatic (reservoir), and Cerebral (output) triads.
+This repository contains the complete implementation of the **Cosmos System 5** model applied to **Echo State Networks** and **Reservoir Computing**.
+
+---
 
 ## Architecture
 
-### Triadic Structure
+### Triadic Structure (18 Services)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    COSYS-ESN IMPLEMENTATION                 │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│   CEREBRAL TRIAD (Output Layer)                            │
-│   ├── P-5: Readout Processing                              │
-│   │   └── Ridge regression training                        │
-│   └── O-4: Output Organization                             │
-│       └── Response formatting                              │
+│   AUTONOMIC TRIAD (Input/Sensory Processing)               │
+│   ├── M-1: InputMonitoringService   — validate, scale       │
+│   ├── S-8: SignalStateService       — circular buffer       │
+│   ├── PD-2: PreprocessingDirectorService — zscore/minmax/PCA│
+│   ├── P-5: TransformProcessingService — FFT/DCT/embed       │
+│   ├── O-4: InputOrganizationService — sliding windows       │
+│   └── T-7: EncodingTriggersService  — k-WTA, threshold      │
 │                                                             │
-│   SOMATIC TRIAD (Reservoir Layer)                          │
-│   ├── M-1: Membrane Interface                              │
-│   │   └── Input scaling & boundary conditions              │
-│   ├── S-8: State Management                                │
-│   │   └── Reservoir state vector & echo persistence        │
-│   └── P-5: Recurrent Processing                            │
-│       ├── Sparse recurrent connections (10% sparsity)      │
-│       ├── Spectral radius control (0.95)                   │
-│       └── Nonlinear activation (tanh)                      │
+│   SOMATIC TRIAD (Reservoir Dynamics)                       │
+│   ├── M-1: MembraneInterfaceService — adaptive scaling      │
+│   ├── S-8: StateManagementService  — state persistence      │
+│   ├── P-5: RecurrentProcessingService — ESN dynamics        │
+│   ├── O-4: DynamicsOrganizationService — spectral monitor   │
+│   ├── PD-2: DynamicsDevelopmentService — topology builder   │
+│   └── T-7: StateTreasuryService    — echo memory store      │
 │                                                             │
-│   AUTONOMIC TRIAD (Input Layer)                            │
-│   ├── M-1: Input Monitoring                                │
-│   │   └── Validation & scaling                             │
-│   └── S-8: Signal State                                    │
-│       └── Buffer management & temporal windowing           │
+│   CEREBRAL TRIAD (Readout & Learning)                      │
+│   ├── M-1: TargetInterfaceService  — loss computation       │
+│   ├── S-8: OutputDeliveryService   — classification/regress │
+│   ├── P-5: ReadoutProcessingService — ridge regression W_out│
+│   ├── O-4: OutputOrganizationService — format output        │
+│   ├── PD-2: LearningDirectorService — ridge/RLS/FORCE       │
+│   └── T-7: WeightTreasuryService   — model save/load        │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Implementation Details
+---
 
-### Core Components
+## Phase Completion
 
-#### 1. Reservoir Dynamics
+### Phase 1: Project Foundation ✅
+- `pyproject.toml` with dependencies (numpy, scipy)
+- `src/cosmos_core/__init__.py`: Triad, Polarity, ServicePosition, Dimension, ServiceConfig, ServiceMessage, create_message, BaseCosmosService, TriadicCoordinator
 
-The reservoir implements the **echo state update equation**:
+### Phase 2: Autonomic Triad ✅
+All 6 services implemented in `src/autonomic_triad/`:
+- `input_monitoring.py` — M-1: validation, NaN handling, scaling
+- `signal_state.py` — S-8: circular buffer (deque)
+- `preprocessing_director.py` — PD-2: z-score, min-max, PCA
+- `transform_processing.py` — P-5: FFT, DCT, random projection
+- `input_organization.py` — O-4: sliding windows, stride, padding
+- `encoding_triggers.py` — T-7: k-WTA, threshold, projection
 
-```
-x(t+1) = (1-α)x(t) + α·f(W_in·u(t+1) + W·x(t))
-```
+### Phase 3: Somatic Triad ✅
+All 6 services implemented in `src/somatic_triad/`:
+- `membrane_interface.py` — M-1: input scaling with adaptive feedback
+- `state_management.py` — S-8: reservoir state + history
+- `recurrent_processing.py` — P-5: sparse ESN reservoir (scipy.sparse)
+- `dynamics_organization.py` — O-4: spectral radius monitoring
+- `dynamics_development.py` — PD-2: random/small-world/scale-free topologies
+- `state_treasury.py` — T-7: cosine-similarity memory store
 
-Where:
-- `x(t)`: Reservoir state vector
-- `u(t)`: Input signal
-- `W`: Sparse recurrent weight matrix
-- `W_in`: Input weight matrix
-- `α`: Leak rate (0.3)
-- `f`: Activation function (tanh)
+### Phase 4: Cerebral Triad ✅
+All 6 services implemented in `src/cerebral_triad/`:
+- `target_interface.py` — M-1: MSE/MAE loss
+- `output_delivery.py` — S-8: regression/classification output
+- `readout_processing.py` — P-5: ridge regression readout
+- `output_organization.py` — O-4: output formatting
+- `learning_director.py` — PD-2: batch ridge, RLS, FORCE
+- `weight_treasury.py` — T-7: model save/load (.npz)
 
-#### 2. Spectral Radius Control
+### Phase 5: EchoStateNetwork Model ✅
+`src/models/echo_state_network.py`:
+- `ESNConfig` dataclass with full configuration
+- `EchoStateNetwork` with `update`, `train`, `predict`, `run`, `save`, `load`
+- Topologies: random, small-world, scale-free
+- Spectral radius scaling via scipy.sparse.linalg.eigs
 
-The recurrent weight matrix `W` is scaled to achieve a spectral radius of **0.95**, placing the system at the **edge of chaos** for maximum computational capacity.
+### Phase 6: EchoBeats Cognitive Loop ✅
+`src/reservoir_core/echo_beats/echo_beats.py`:
+- `Phase` enum: PERCEIVE, ATTEND, FRAME, REASON, INTEND, EXECUTE, EVALUATE, INTEGRATE
+- `PHASE_SEQUENCE`: 12-step sequence
+- `CognitiveStream`: Single stream with phase offset and perception buffer
+- `EchoBeatsLoop`: 3 interleaved streams (0°, 120°, 240° offsets)
 
-```python
-eigenvalues = np.linalg.eigvals(W)
-current_radius = np.max(np.abs(eigenvalues))
-W = W * (target_spectral_radius / current_radius)
-```
+### Phase 7: ReservoirAutognosis ✅
+`src/reservoir_core/autognosis/autognosis.py`:
+- Layer 1 (Self-Monitoring): state_norm, spectral_analysis, echo_index, activation_statistics
+- Layer 2 (Self-Modeling): capacity_estimation, kernel_quality, memory_depth
+- Layer 3 (Meta-Cognitive): performance_prediction, anomaly_detection, should_adapt
+- Layer 4 (Self-Optimization): tune_spectral_radius, adapt_leak_rate, optimize_input_scaling
 
-#### 3. Ridge Regression Training
+### Phase 8: Integration Hub ✅
+`src/integration_hub/cosmos_reservoir_system.py`:
+- `CosmosReservoirSystem`: Full 18-service wired async pipeline
+- Autonomic → Somatic → Cerebral routing with message passing
+- `initialize`, `train`, `process_input` async methods
 
-Output weights are trained using ridge regression:
+Also implemented:
+- `src/reservoir_core/ontogenesis/ontogenesis.py`: `ReservoirKernelGenome`, `Population` for evolutionary reservoir optimisation
+- `src/models/system5_esn.py`: `ReservoirSystem5` mapping VSM to ESN
 
-```
-W_out = Y^T X (X^T X + λI)^-1
-```
+### Phase 9: Tests ✅
+54 tests in `tests/` directory (all passing):
+- `test_cosmos_core.py` — primitives: enums, configs, messages, coordinator
+- `test_autonomic.py` — all 6 autonomic services
+- `test_somatic.py` — all 6 somatic services
+- `test_cerebral.py` — all 6 cerebral services
+- `test_esn.py` — ESN integration: Mackey-Glass NRMSE < 0.1, topologies, save/load
+- `test_echo_beats.py` — 12-step cognitive loop
+- `test_autognosis.py` — 4-layer self-awareness system
 
-Where:
-- `X`: Reservoir states
-- `Y`: Target outputs
-- `λ`: Regularization parameter (1e-6)
+Run with: `python -m pytest tests/ -q`
 
-### Configuration
+### Phase 10: Documentation & Examples ✅
 
-```python
-ReservoirConfig(
-    input_dim=5,           # Input dimensionality
-    reservoir_dim=200,     # Number of reservoir units
-    output_dim=1,          # Output dimensionality
-    spectral_radius=0.95,  # Edge-of-chaos dynamics
-    leak_rate=0.3,         # Temporal integration
-    sparsity=0.1,          # Connection density
-    ridge_lambda=1e-6      # Regularization strength
-)
-```
+**Docs** (`docs/`):
+- `reservoir-computing.md` — ESNs, spectral radius, ridge regression, memory capacity, ESP, Mackey-Glass, usage examples
+- `membrane-computing.md` — P-systems, membrane layers, boundary conditions, triadic hierarchy, compartment model
+- `implementation-guide.md` — Full API reference for all 18 services, ESNConfig, EchoStateNetwork, EchoBeatsLoop, ReservoirAutognosis, ReservoirKernelGenome, CosmosReservoirSystem
 
-## Performance
+**Examples** (`examples/`):
+- `time_series_prediction.py` — Mackey-Glass prediction via CosmosReservoirSystem
+- `echo_beats_demo.py` — 12-step cognitive loop demonstration
+- `autognosis_demo.py` — 4-layer self-awareness monitoring and adaptation
 
-### Mackey-Glass Benchmark
+---
 
-The implementation was tested on the **Mackey-Glass chaotic time series** prediction task:
-
-| Metric | Value |
-|--------|-------|
-| **NRMSE** | 0.001874 |
-| **RMSE** | 0.000442 |
-| **MAE** | 0.000341 |
-| **Performance** | ✓ Excellent (NRMSE < 0.1) |
-
-### Key Results
-
-- Successfully captures chaotic dynamics
-- Demonstrates echo state property
-- Achieves state-of-the-art prediction accuracy
-- Validates triadic architecture effectiveness
-
-## Usage
-
-### Basic Example
-
-```python
-import asyncio
-from reservoir import CosmosReservoirSystem, ReservoirConfig
-
-# Create configuration
-config = ReservoirConfig(
-    input_dim=5,
-    reservoir_dim=200,
-    output_dim=1,
-    spectral_radius=0.95
-)
-
-# Initialize system
-system = CosmosReservoirSystem(config)
-asyncio.run(system.initialize())
-
-# Train on data
-system.train(train_inputs, train_targets)
-
-# Make predictions
-output = asyncio.run(system.process_input(test_input))
-```
-
-### Time Series Prediction
-
-See `examples/time_series_prediction.py` for a complete example demonstrating:
-- Mackey-Glass time series generation
-- Dataset preparation
-- Training and evaluation
-- Visualization of results
-
-## Integration with Cosmos Core
-
-The implementation integrates with the shared `cosmos_core` library:
+## Quick Start
 
 ```python
-from cosmos_core import (
-    BaseCosmosService,
-    ServiceConfig,
-    Triad,
-    Polarity,
-    ServicePosition,
-    Dimension
-)
-```
+import sys, os
+sys.path.insert(0, 'src')
 
-Each service (input, reservoir, readout) extends `BaseCosmosService` and follows the Cosmos System 5 architecture patterns.
+from models.echo_state_network import EchoStateNetwork, ESNConfig
+import numpy as np
 
-## File Structure
+config = ESNConfig(n_inputs=5, n_reservoir=200, n_outputs=1,
+                   spectral_radius=0.95, leak_rate=0.3, random_seed=42)
+esn = EchoStateNetwork(config)
 
-```
-cosys-esn/
-├── src/
-│   └── reservoir.py          # Main implementation
-├── examples/
-│   ├── time_series_prediction.py
-│   └── mackey_glass_prediction.png
-├── README.md                 # Original documentation
-├── ARCHITECTURE.md          # (from original repo)
-└── IMPLEMENTATION.md        # This file
-```
-
-## Dependencies
-
-- Python 3.11+
-- NumPy
-- Matplotlib (for examples)
-- cosmos_core (shared library)
-
-## Future Enhancements
-
-### Planned Features
-
-1. **Additional Reservoir Types**
-   - Liquid State Machines
-   - Delay-coupled reservoirs
-   - Hierarchical reservoirs
-
-2. **Online Learning**
-   - Recursive least squares (RLS)
-   - FORCE learning
-   - Adaptive spectral radius
-
-3. **Neuromorphic Integration**
-   - SpikeFlow compatibility
-   - Hardware acceleration
-   - Event-based processing
-
-4. **Benchmark Suite**
-   - NARMA tasks
-   - Memory capacity tests
-   - Nonlinear system identification
-
-## References
-
-1. **Echo State Networks**: Jaeger, H. (2001). "The echo state approach to analysing and training recurrent neural networks."
-2. **Reservoir Computing**: Lukoševičius, M., & Jaeger, H. (2009). "Reservoir computing approaches to recurrent neural network training."
-3. **Cosmos System 5**: https://github.com/o9nn/cosmos-system-5
-
-## License
-
-AGPL-3.0 (consistent with cosmos-system-5)
-
-## Citation
-
-If you use this implementation in your research, please cite:
-
-```bibtex
-@software{cosys_esn_2025,
-  title = {COSYS-ESN: Cosmos System 5 Reservoir Computing Implementation},
-  author = {Cosmos System Enhancement Project},
-  year = {2025},
-  url = {https://github.com/o9nn/cosys-esn}
-}
+X = np.random.randn(500, 5)
+y = np.sum(X, axis=1, keepdims=True)
+esn.train(X[:400], y[:400])
+preds = esn.run(X[400:])
 ```
 
 ---
 
-**Status**: ✓ Production Ready  
-**Last Updated**: December 29, 2025  
-**Version**: 1.0.0
+## Key Design Principles
+
+1. **Triadic layering**: Input (Autonomic) → Dynamics (Somatic) → Output (Cerebral)
+2. **Message passing**: All services communicate via typed `ServiceMessage` objects
+3. **Fixed reservoir**: Only `W_out` is trained; `W_in` and `W` are fixed after init
+4. **Echo state property**: ρ(W) < 1 guarantees fading memory and convergence
+5. **Spectral radius at edge-of-chaos**: ρ ≈ 0.9–0.99 maximises temporal capacity
+6. **Self-awareness**: `ReservoirAutognosis` monitors and adapts reservoir parameters at runtime
+
+---
+
+## Dependencies
+
+```
+numpy >= 1.24
+scipy >= 1.10
+pytest >= 7.0  (tests only)
+matplotlib     (time_series_prediction.py example only)
+```
