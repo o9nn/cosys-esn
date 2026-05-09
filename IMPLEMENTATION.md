@@ -109,7 +109,7 @@ Also implemented:
 - `src/models/system5_esn.py`: `ReservoirSystem5` mapping VSM to ESN
 
 ### Phase 9: Tests ✅
-54 tests in `tests/` directory (all passing):
+103 tests in `tests/` directory (all passing):
 - `test_cosmos_core.py` — primitives: enums, configs, messages, coordinator
 - `test_autonomic.py` — all 6 autonomic services
 - `test_somatic.py` — all 6 somatic services
@@ -117,6 +117,9 @@ Also implemented:
 - `test_esn.py` — ESN integration: Mackey-Glass NRMSE < 0.1, topologies, save/load
 - `test_echo_beats.py` — 12-step cognitive loop
 - `test_autognosis.py` — 4-layer self-awareness system
+- `test_integration_hub.py` — EventBus, StreamManager, CosmosReservoirSystem (18-service async pipeline)
+- `test_system5_esn.py` — ReservoirSystem5: 60-step cycle, UniversalMode, ReservoirCompartment
+- `test_ontogenesis.py` — gene types, ReservoirKernelGenome, b_series_reservoir_expansion, Population
 
 Run with: `python -m pytest tests/ -q`
 
